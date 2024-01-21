@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectPlanner", "ProjectPlanner\ProjectPlanner.csproj", "{66C66937-E868-420C-9DF9-3E30753A28BC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{66C66937-E868-420C-9DF9-3E30753A28BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66C66937-E868-420C-9DF9-3E30753A28BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66C66937-E868-420C-9DF9-3E30753A28BC}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{66C66937-E868-420C-9DF9-3E30753A28BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66C66937-E868-420C-9DF9-3E30753A28BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66C66937-E868-420C-9DF9-3E30753A28BC}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {11E6606B-3CD9-44CB-851D-7B0370461728}
+	EndGlobalSection
+EndGlobal
