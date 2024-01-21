@@ -1,4 +1,4 @@
-﻿namespace ProjectPlanner
+﻿namespace ProjectPlanner.Views
 {
     public partial class MainPage : ContentPage
     {
