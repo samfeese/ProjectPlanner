@@ -1,24 +1,25 @@
-﻿namespace ProjectPlanner.Views
+﻿using ProjectPlanner.ViewModels;
+
+namespace ProjectPlanner.Views
 {
     public partial class MainPage : ContentPage
     {
-        int count = 0;
-
         public MainPage()
         {
             InitializeComponent();
+            BindingContext = new MainPageViewModel();
         }
 
-        private void OnCounterClicked(object sender, EventArgs e)
+        protected override async void OnAppearing()
         {
-            count++;
+            base.OnAppearing();
+            if (BindingContext is MainPageViewModel viewModel)
+            {
 
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
+                await viewModel.Load();
+            }
 
-            SemanticScreenReader.Announce(CounterBtn.Text);
+
         }
     }
 

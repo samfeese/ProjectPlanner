@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 
 namespace ProjectPlanner
-{
+{ 
     public static class MauiProgram
     {
         public static MauiApp CreateMauiApp()
@@ -15,8 +15,10 @@ namespace ProjectPlanner
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
+            //builder.Services.AddTransient<MainPageViewModel>();
+            builder.Services.AddSingleton<DatabaseHelper>();
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
 
             return builder.Build();
