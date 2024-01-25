@@ -7,6 +7,7 @@ namespace ProjectPlanner
         public AppShell()
         {
             InitializeComponent();
+            Routing.RegisterRoute("mainPage", typeof(MainPage));
             Routing.RegisterRoute("projectForm", typeof(ProjectForm));
         }
     }

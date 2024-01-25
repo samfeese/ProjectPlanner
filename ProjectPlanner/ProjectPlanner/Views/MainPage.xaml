@@ -41,6 +41,7 @@
 
             <Button Text="Add Project" Margin="20" Padding="10" TextColor="White" Background="#1A5D7F" Command="{Binding NavProjectForm}" />
             <Button Text="Seed Data" Margin="20" Padding="10" TextColor="White" Background="#4cbb17" Command="{Binding SeedData}" />
+            <Button Text="Truncate Data" Margin="20" Padding="10" TextColor="White" Background="#4cbb17" Command="{Binding Truncate}" />
 
 
         </StackLayout>

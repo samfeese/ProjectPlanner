@@ -13,6 +13,7 @@ namespace ProjectPlanner.ViewModels
         public ICommand ProjectSelected { get; set; }
         public ICommand EditProject { get; set; }
         public ICommand SeedData { get; }
+        public ICommand Truncate { get;  }
         private Project selectedProject;
 
         readonly DatabaseHelper db;
@@ -25,6 +26,7 @@ namespace ProjectPlanner.ViewModels
             ProjectSelected = new Command(OnProjectSelected);
             EditProject = new Command<Project>(OnEditTerm);
             SeedData = new Command(Seed);
+            Truncate = new Command(TruncateData);
 
         }
 
@@ -96,6 +98,12 @@ namespace ProjectPlanner.ViewModels
         {
            await db.Reseed();
         await Shell.Current.GoToAsync($"mainPage");
+        }
+
+        public async void TruncateData()
+        {
+            await db.Truncate();
+            await Shell.Current.GoToAsync($"mainPage");
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
