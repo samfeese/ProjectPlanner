@@ -29,9 +29,9 @@ namespace ProjectPlanner
             return await _db.Table<T>().ToListAsync();
         }
 
-        public async Task<int> AddAsync<T>(T item) where T : new()  
-        {                                                       
-            await Init();                                              
+        public async Task<int> AddAsync<T>(T item) where T : new()
+        {
+            await Init();
             return await _db.InsertAsync(item);
         }
 
@@ -66,6 +66,16 @@ namespace ProjectPlanner
             await Truncate();
             Project p = new Project { Id = 1, Name = "Project Cool Name" };
             await AddAsync(p);
+        }
+
+        //Custom Fields Here
+
+        public async Task<List<DailyTask>> GetAllDailyByProjectId(int key)
+        {
+            await Init();
+            var query = _db.Table<DailyTask>().Where(t => t.AssociatedProjectId == key);
+            return await query.ToListAsync();
+          
         }
     }
 }
