@@ -1,28 +1,22 @@
-﻿using System;
+﻿using SQLite;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SQLite;
-
 
 namespace ProjectPlanner.Models
 {
-    public class Project
+    public class DailyTask
     {
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
         [MaxLength(255)]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
-        [MaxLength(255)]
-        public string Description { get; set; }
-        [MaxLength(255)]
-        public string Notes { get; set; }
-
-
-
-
+        public bool Complete { get; set; }
+        public DateTime? Date { get; set;}
+        public int AssociatedProject { get; set; }
     }
 }
