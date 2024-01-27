@@ -62,7 +62,7 @@ namespace ProjectPlanner.ViewModels
 
             if (selectedProject != null)
             {          
-                Shell.Current.GoToAsync($"projectPage?projectId={SelectedProject.Id}");
+                Shell.Current.GoToAsync($"dailyDisplay?projectId={SelectedProject.Id}");
 
             }
         }

@@ -21,6 +21,7 @@ namespace ProjectPlanner
 
             _db = new SQLiteAsyncConnection(Constants.DatabasePath, Constants.Flags);
             var result1 = await _db.CreateTableAsync<Project>();
+            var result2 = await _db.CreateTableAsync<DailyTask>();
         }
 
         public async Task<List<T>> GetAllAsync<T>() where T : new()
@@ -76,6 +77,13 @@ namespace ProjectPlanner
             var query = _db.Table<DailyTask>().Where(t => t.AssociatedProjectId == key);
             return await query.ToListAsync();
           
+        }
+
+        public async Task<List<DailyTask>> GetAllDailyByProjectIdAndDate(int key, DateTime date)
+        {
+            await Init();
+            var query = _db.Table<DailyTask>().Where(t => t.AssociatedProjectId == key).Where(t => t.Date.Date == date.Date );
+            return await query.ToListAsync();
         }
     }
 }

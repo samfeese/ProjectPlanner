@@ -1,12 +1,35 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="ProjectPlanner.Views.DailyDisplay"
-             Title="DailyDisplay">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             x:Class="ProjectPlanner.Views.DailyDisplay">
+    <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*,2*,*">
+
+        <!-- Project Name -->
+        <BoxView Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Color="LightBlue"/>
+        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Text="Project Name" HorizontalOptions="Center" VerticalOptions="Center"/>
+
+        <!-- Day, Previous, and Next Buttons -->
+        <StackLayout Grid.Row="1" Grid.Column="0" Orientation="Vertical" BackgroundColor="Pink">
+            <Label Text="Day and next and previous buttons" HorizontalOptions="Center" VerticalOptions="Center"/>
+            <!-- Insert your buttons here -->
+        </StackLayout>
+
+        <!-- Calendar View -->
+        <StackLayout Grid.Row="1" Grid.Column="1" Orientation="Vertical" BackgroundColor="LightGray">
+            <Label Text="Calendar" HorizontalOptions="Center" VerticalOptions="Center"/>
+            <!-- Insert your calendar view here -->
+        </StackLayout>
+
+        <!-- Tasks for the Day -->
+        <StackLayout Grid.Row="1" Grid.Column="2" Orientation="Vertical" BackgroundColor="Pink">
+            <Label Text="Tasks for the day" HorizontalOptions="Center" VerticalOptions="Center"/>
+            <!-- Insert your tasks list here -->
+        </StackLayout>
+
+        <!-- Notes Section -->
+        <StackLayout Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Vertical" BackgroundColor="LightGreen">
+            <Label Text="Notes" HorizontalOptions="Center" VerticalOptions="Center"/>
+            <!-- Insert your notes content here -->
+        </StackLayout>
+
+    </Grid>
 </ContentPage>

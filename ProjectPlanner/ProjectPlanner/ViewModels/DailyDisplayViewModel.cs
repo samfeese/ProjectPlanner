@@ -57,15 +57,6 @@ namespace ProjectPlanner.ViewModels
             }
         }
 
-        public ObservableCollection<DailyTask> FilterByDate
-        {
-            get => DailyTasksByDate;
-            set
-            {
-
-            }
-        }
-
         public int ProjectID
         {
             set
@@ -90,7 +81,7 @@ namespace ProjectPlanner.ViewModels
             );
         }
 
-        private void ChangeDisplayDate()
+        private async void ChangeDisplayDate()
         {
             List<DailyTask> dbDailyTasks = await db.GetAllDailyByProjectIdAndDate(_projectId, displayDate);
             MainThread.BeginInvokeOnMainThread(() =>

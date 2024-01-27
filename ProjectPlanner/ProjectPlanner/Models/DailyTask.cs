@@ -16,7 +16,7 @@ namespace ProjectPlanner.Models
         public string? Name { get; set; }
 
         public bool Complete { get; set; }
-        public DateTime? Date { get; set;}
+        public DateTime Date { get; set;}
         public int AssociatedProjectId { get; set; }
     }
 }
