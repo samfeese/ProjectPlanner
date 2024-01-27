@@ -15,19 +15,18 @@ namespace ProjectPlanner.ViewModels
     {
         public int _projectId = -1;
         readonly DatabaseHelper db;
-        private ObservableCollection<DailyTask> AllDailyTasks { get; set; }
         private ObservableCollection<DailyTask> DailyTasksByDate { get; set; }
         private Project _project { get; set; }
         private DateTime displayDate = DateTime.Now;
-        public ICommand ChangeDate { get; set; }
+        public ICommand IncrementDate { get; set; }
+        public ICommand DecrementDate { get; set; }
 
         public DailyDisplayViewModel() {
-
-            AllDailyTasks = new ObservableCollection<DailyTask>();
             DailyTasksByDate = new ObservableCollection<DailyTask>();
             db = new DatabaseHelper();
 
-            ChangeDate = new Command(ChangeDisplayDate);
+            IncrementDate = new Command(IncrementDisplayDate);
+            DecrementDate = new Command(DecrementDisplayDate);
 
 
         }
@@ -51,16 +50,6 @@ namespace ProjectPlanner.ViewModels
                 OnPropertyChanged(nameof(DisplayDate));
             }
         }
-        
-        public ObservableCollection<DailyTask> GetTasks
-        {
-            get => AllDailyTasks;
-            set
-            {
-                AllDailyTasks = value;
-                OnPropertyChanged(nameof(GetTasks));
-            }
-        }
 
         public ObservableCollection<DailyTask> GetTasksByDate
         {
@@ -68,7 +57,7 @@ namespace ProjectPlanner.ViewModels
             set
             {
                 DailyTasksByDate = value;
-                OnPropertyChanged(nameof(GetTasks));
+                OnPropertyChanged(nameof(GetTasksByDate));
             }
         }
 
@@ -87,38 +76,57 @@ namespace ProjectPlanner.ViewModels
 
             Project p = await db.GetSingleAsync<Project>(_projectId);
 
-            List<DailyTask> dbDailyTasks = await db.GetAllDailyByProjectId(_projectId);
+            List<DailyTask> dbDailyTasks = await db.GetAllDailyByProjectIdAndDate(_projectId, DisplayDate);
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 CurrentProject = p;
-                Console.WriteLine(p.Name);
-                Console.WriteLine(CurrentProject.Name);
-                GetTasks.Clear();
+                GetTasksByDate.Clear();
                 foreach (DailyTask dt in dbDailyTasks)
                 {
-                    GetTasks.Add(dt);
-                    OnPropertyChanged(nameof(GetTasks));
+                    GetTasksByDate.Add(dt);
+                    OnPropertyChanged(nameof(GetTasksByDate));
                 }
 
             }
             );
         }
 
-        private async void ChangeDisplayDate()
+        private async void IncrementDisplayDate()
         {
-            List<DailyTask> dbDailyTasks = await db.GetAllDailyByProjectIdAndDate(_projectId, displayDate);
+            DisplayDate = DisplayDate.AddDays(1);
+
+            List<DailyTask> dbDailyTasks = await db.GetAllDailyByProjectIdAndDate(ProjectID, DisplayDate);
+
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                GetTasks.Clear();
+                GetTasksByDate.Clear();
                 foreach (DailyTask dt in dbDailyTasks)
                 {
-                    GetTasks.Add(dt);
-                    OnPropertyChanged(nameof(GetTasks));
+                    GetTasksByDate.Add(dt);
+                    OnPropertyChanged(nameof(GetTasksByDate));
                 }
 
             }
             );
-        } 
+        }
+
+        private async void DecrementDisplayDate()
+        {
+            DisplayDate = DisplayDate.AddDays(-1);
+
+            List<DailyTask> dbDailyTasks = await db.GetAllDailyByProjectIdAndDate(ProjectID, DisplayDate);
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                GetTasksByDate.Clear();
+                foreach (DailyTask dt in dbDailyTasks)
+                {
+                    GetTasksByDate.Add(dt);
+                    OnPropertyChanged(nameof(GetTasksByDate));
+                }
+
+            }
+            );
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)

@@ -59,6 +59,8 @@ namespace ProjectPlanner
             await Init();
             await _db.ExecuteAsync("DELETE FROM Project");
             await _db.ExecuteAsync("UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='Project'");
+            await _db.ExecuteAsync("DELETE FROM DailyTask");
+            await _db.ExecuteAsync("UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='DailyTask'");
         }
 
         public async Task Reseed()
@@ -66,6 +68,13 @@ namespace ProjectPlanner
             await Init();
             await Truncate();
             Project p = new Project { Id = 1, Name = "Project Cool Name" };
+            DailyTask d1 = new() { Name = "Do it now", Complete = true, AssociatedProjectId = 1, Date = DateTime.Now };
+            await AddAsync(d1);
+            DailyTask d2 = new() { Name = "Do it never", Complete = true, AssociatedProjectId = 2, Date = DateTime.Now };
+            await AddAsync(d2);
+            DailyTask d3 = new() { Name = "Do it later", Complete = false, AssociatedProjectId = 1, Date = DateTime.Now };
+            await AddAsync(d3);
+
             await AddAsync(p);
         }
 
@@ -82,8 +91,13 @@ namespace ProjectPlanner
         public async Task<List<DailyTask>> GetAllDailyByProjectIdAndDate(int key, DateTime date)
         {
             await Init();
-            var query = _db.Table<DailyTask>().Where(t => t.AssociatedProjectId == key).Where(t => t.Date.Date == date.Date );
-            return await query.ToListAsync();
+            // Await the task to get the actual list
+            var allTasks = await _db.Table<DailyTask>().Where(t => t.AssociatedProjectId == key).ToListAsync();
+
+            // Filter the tasks using LINQ and then convert to a list
+            var filteredTasks = allTasks.Where(t => t.Date.Date == date.Date).ToList();
+
+            return filteredTasks;
         }
     }
 }

@@ -1,6 +1,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:ProjectPlanner.ViewModels"
+             xmlns:m="clr-namespace:ProjectPlanner.Models"
              x:DataType="vm:DailyDisplayViewModel"
              x:Class="ProjectPlanner.Views.DailyDisplay">
     <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*,1*,*">
@@ -12,15 +13,13 @@
             <Grid VerticalOptions="FillAndExpand"  ColumnDefinitions="*,*,*">
 
                 <Button Grid.Column="0"  Text="Prev" TextColor="White" WidthRequest="60" HeightRequest="40" Margin="0,5" BackgroundColor="#1A5D7F" VerticalOptions="Start"
-                    Command="{Binding DisplayDate}"
-                    CommandParameter="{Binding .}" />
+                    Command="{Binding DecrementDate}"/>
 
                 <Label Grid.Column="1" Text="{Binding DisplayDate.Day}" HorizontalOptions="Center" VerticalOptions="Center"/>
 
                 <Button Grid.Column="2" Text="Next" TextColor="White" WidthRequest="60" HeightRequest="40" Margin="0,5" BackgroundColor="#1A5D7F"
 
-                    Command="{Binding Path=BindingContext.EditTerm, Source={x:Reference ProjectTile}}"
-                    CommandParameter="{Binding .}" />
+                    Command="{Binding IncrementDate}"/>
             </Grid>
            
         </StackLayout>
@@ -28,7 +27,20 @@
         <!--Tasks for the Day-->
         <StackLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Vertical" BackgroundColor="Azure">
             <Label Text="Daily Tasks" HorizontalOptions="Center" VerticalOptions="Center"/>
-            <!--Insert your tasks list here-->
+            <CollectionView ItemsSource="{Binding GetTasksByDate}"
+                SelectionMode="Single"              
+                HorizontalOptions="FillAndExpand"
+                x:Name="TaskRow">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="m:DailyTask">
+                        <FlexLayout Direction="Row" JustifyContent="SpaceBetween"  Margin="20" Padding="10"  BackgroundColor="#4E4D4D">
+                            <CheckBox IsChecked="{Binding Complete}" />
+                            <Label TextColor="White" FontSize="Micro" Text="{Binding Name}" VerticalOptions="Center" Margin="10, 0, 30, 0" />
+
+                        </FlexLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
         </StackLayout>
 
 

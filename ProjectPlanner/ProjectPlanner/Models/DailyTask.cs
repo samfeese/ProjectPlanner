@@ -18,5 +18,10 @@ namespace ProjectPlanner.Models
         public bool Complete { get; set; }
         public DateTime Date { get; set;}
         public int AssociatedProjectId { get; set; }
+
+        public DailyTask()
+        {
+            Complete = false;
+        }
     }
 }
