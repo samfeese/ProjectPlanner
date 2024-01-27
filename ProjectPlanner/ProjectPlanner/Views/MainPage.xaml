@@ -12,10 +12,9 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <Label Grid.Column="1" Text="WGU" HorizontalOptions="Center" VerticalOptions="Center" FontSize="Large" />
+                <Label Grid.Column="1" Text="Projects" HorizontalOptions="Center" VerticalOptions="Center" FontSize="Large" Padding="0, 10, 0, 0" />
             </Grid>
 
-            <Label Text="Terms" HorizontalOptions="Center" Padding="10,0" />
 
             <CollectionView ItemsSource="{Binding GetProjects}"
                 SelectionMode="Single"
@@ -27,7 +26,7 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <FlexLayout Direction="Row" JustifyContent="SpaceBetween"  Margin="20" Padding="10"  BackgroundColor="#4E4D4D">
-                            <Label TextColor="White" FontSize="Micro" Text="{Binding Name}" VerticalOptions="Center" Margin="0, 0, 30, 0" />
+                            <Label TextColor="White" FontSize="Micro" Text="{Binding Name}" VerticalOptions="Center" Margin="10, 0, 30, 0" />
                             <Button Text="Edit" TextColor="White" WidthRequest="60" HeightRequest="40" Margin="0, 5, 5, 2" BackgroundColor="#1A5D7F"
                                      VerticalOptions="Center" HorizontalOptions="End" 
                                      Command="{Binding Path=BindingContext.EditTerm, Source={x:Reference ProjectTile}}"

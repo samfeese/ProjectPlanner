@@ -11,12 +11,13 @@ using System.Windows.Input;
 namespace ProjectPlanner.ViewModels
 {
     [QueryProperty(nameof(ProjectID), "projectId")]
-    class DailyDisplayViewModel
+    class DailyDisplayViewModel 
     {
         public int _projectId = -1;
         readonly DatabaseHelper db;
         private ObservableCollection<DailyTask> AllDailyTasks { get; set; }
         private ObservableCollection<DailyTask> DailyTasksByDate { get; set; }
+        private Project _project { get; set; }
         private DateTime displayDate = DateTime.Now;
         public ICommand ChangeDate { get; set; }
 
@@ -31,10 +32,24 @@ namespace ProjectPlanner.ViewModels
 
         }
 
+        public Project CurrentProject
+        {
+            get => _project;
+            set 
+            { 
+                _project = value;
+                OnPropertyChanged(nameof(CurrentProject));
+            }
+        }
+
         public DateTime DisplayDate 
         {
             get => displayDate;
-            set => displayDate = value;
+            set  
+            {
+                displayDate = value;
+                OnPropertyChanged(nameof(DisplayDate));
+            }
         }
         
         public ObservableCollection<DailyTask> GetTasks
@@ -59,17 +74,25 @@ namespace ProjectPlanner.ViewModels
 
         public int ProjectID
         {
+            get => _projectId;
             set
             {
                 _projectId = value;
+                OnPropertyChanged(nameof(ProjectID));
             }
         }
 
         public async Task Load()
         {
+
+            Project p = await db.GetSingleAsync<Project>(_projectId);
+
             List<DailyTask> dbDailyTasks = await db.GetAllDailyByProjectId(_projectId);
             MainThread.BeginInvokeOnMainThread(() =>
             {
+                CurrentProject = p;
+                Console.WriteLine(p.Name);
+                Console.WriteLine(CurrentProject.Name);
                 GetTasks.Clear();
                 foreach (DailyTask dt in dbDailyTasks)
                 {

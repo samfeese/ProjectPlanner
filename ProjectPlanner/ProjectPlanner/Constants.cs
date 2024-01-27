@@ -10,7 +10,7 @@ namespace ProjectPlanner
     {
         public const string DBFile = "myApp.db";
 
-        public const SQLite.SQLiteOpenFlags Flags = //All of this is from microsoft docs directly
+        public const SQLite.SQLiteOpenFlags Flags = 
             SQLite.SQLiteOpenFlags.ReadWrite |
             SQLite.SQLiteOpenFlags.Create;
 
