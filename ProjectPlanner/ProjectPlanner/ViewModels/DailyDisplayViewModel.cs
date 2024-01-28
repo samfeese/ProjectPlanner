@@ -1,4 +1,5 @@
-﻿using ProjectPlanner.Models;
+﻿using Microsoft.Maui.Controls.Compatibility;
+using ProjectPlanner.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -22,7 +23,10 @@ namespace ProjectPlanner.ViewModels
         public ICommand IncrementDate { get; set; }
         public ICommand DecrementDate { get; set; }
         public ICommand NavDailyTaskForm { get; set; }
+        public Command TaskSelected { get; set; }
 
+        private bool _isLoadingData = false;
+        private DailyTask selectedTask;
         public DailyDisplayViewModel() {
             DailyTasksByDate = new ObservableCollection<DailyTask>();
             db = new DatabaseHelper();
@@ -30,8 +34,31 @@ namespace ProjectPlanner.ViewModels
             IncrementDate = new Command(IncrementDisplayDate);
             DecrementDate = new Command(DecrementDisplayDate);
             NavDailyTaskForm = new Command(NavToTaskForm);
+            TaskSelected = new Command(OnTermSelected);
 
 
+        }
+
+        public DailyTask SelectedTask
+        {
+            get => selectedTask;
+            set
+            {
+                if (selectedTask != value)
+                {
+                    selectedTask = value;
+                    OnPropertyChanged(nameof(SelectedTask));
+                }
+            }
+        }
+        private void OnTermSelected()
+        {
+
+            if (selectedTask != null)
+            {
+                Shell.Current.GoToAsync($"dailyTaskForm?projectId={ProjectID}&taskDateString={DisplayDateString}&taskId={selectedTask.Id}");
+
+            }
         }
 
         public Project CurrentProject
@@ -51,6 +78,16 @@ namespace ProjectPlanner.ViewModels
             {
                 displayDate = value;
                 OnPropertyChanged(nameof(DisplayDate));
+            }
+        }
+
+        public bool IsLoadingData
+        {
+            get => _isLoadingData;
+            set
+            {
+                _isLoadingData = value;
+                OnPropertyChanged(nameof(IsLoadingData));
             }
         }
 
@@ -84,8 +121,20 @@ namespace ProjectPlanner.ViewModels
             }
         }
 
+        public async void UpdateCompleteCommand(DailyTask task)
+        {
+            if (task != null)
+            {
+                task.Complete = task.Complete ? false : true;
+                await db.UpdateAsync(task);
+
+                await Load();
+            }
+        }
+
         public async Task Load()
         {
+            _isLoadingData = true;
             DisplayDateString = DisplayDate.ToString("yyyy-MM-dd");
             Project p = await db.GetSingleAsync<Project>(_projectId);
 
@@ -101,8 +150,8 @@ namespace ProjectPlanner.ViewModels
                     OnPropertyChanged(nameof(GetTasksByDate));
                 }
 
-            }
-            );
+            });
+            _isLoadingData = false;
         }
 
         private async void IncrementDisplayDate()

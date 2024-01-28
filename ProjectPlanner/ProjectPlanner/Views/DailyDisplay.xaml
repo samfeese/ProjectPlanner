@@ -28,15 +28,16 @@
         <StackLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Vertical" BackgroundColor="Azure">
             <Label Text="Daily Tasks" HorizontalOptions="Center" VerticalOptions="Center"/>
             <CollectionView ItemsSource="{Binding GetTasksByDate}"
+                SelectedItem="{Binding SelectedTask}"       
+                SelectionChangedCommand="{Binding TaskSelected}"
                 SelectionMode="Single"              
                 HorizontalOptions="FillAndExpand"
                 x:Name="TaskRow">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="m:DailyTask">
                         <FlexLayout Direction="Row" JustifyContent="SpaceBetween"  Margin="20" Padding="10"  BackgroundColor="#4E4D4D">
-                            <CheckBox IsChecked="{Binding Complete}" />
+                            <Image Source="{Binding Complete, Converter={StaticResource BoolToImage}}" WidthRequest="24" HeightRequest="24" />
                             <Label TextColor="White" FontSize="Micro" Text="{Binding Name}" VerticalOptions="Center" Margin="10, 0, 30, 0" />
-
                         </FlexLayout>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>

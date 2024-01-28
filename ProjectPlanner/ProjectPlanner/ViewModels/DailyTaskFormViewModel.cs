@@ -17,6 +17,9 @@ namespace ProjectPlanner.ViewModels
         readonly DatabaseHelper db;
 
         private string taskName;
+        private bool completed;
+
+        public List<string> StatusOptions { get; set; }
 
         public ICommand SaveTask { get; set; }
         public ICommand DeleteTask { get; set; }
@@ -27,6 +30,8 @@ namespace ProjectPlanner.ViewModels
             db = new DatabaseHelper();
             SaveTask = new Command(AddTask);
             DeleteTask = new Command(DeleteTaskBtn);
+            StatusOptions = ["Complete", "Not Complete"];
+            SelectedStatus = StatusOptions[1];
         }
 
         public int ProjectId
@@ -46,7 +51,16 @@ namespace ProjectPlanner.ViewModels
             }
 
         }
-
+        private string selectedStatus;
+        public string SelectedStatus
+        {
+            get => selectedStatus;
+            set
+            {
+                selectedStatus = value;
+                OnPropertyChanged(nameof(SelectedStatus));
+            }
+        }
         public DateTime TaskDate
         {
             get { return _taskDate; }
@@ -74,13 +88,30 @@ namespace ProjectPlanner.ViewModels
             }
         }
 
+        public bool Completed
+        {
+            get => completed;
+            set
+            {
+                completed = value;
+                OnPropertyChanged(nameof(Completed));
+            }
+        }
+
         public async void RetrieveTask()
         {
             DailyTask dt = await db.GetSingleAsync<DailyTask>(_taskId);
             if (dt != null)
             {
-                //Fill in form fields here
-
+                TaskName = dt.Name;
+                Completed = dt.Complete;
+                if (Completed)
+                {
+                    SelectedStatus = StatusOptions[0];
+                } else
+                {
+                    SelectedStatus = StatusOptions[1];
+                }
 
                 SaveButtonText = "Update Task";
             }
@@ -100,7 +131,8 @@ namespace ProjectPlanner.ViewModels
             TaskDate = DateTime.Parse(TaskDateString);
             if (_taskId > 0)
             {
-                DailyTask dt = new DailyTask { Id = _taskId, Name = TaskName, Date = TaskDate};
+                bool isComplete = SelectedStatus == "Complete";
+                DailyTask dt = new DailyTask { Id = _taskId, Name = TaskName, Date = TaskDate, Complete=isComplete};
                 await db.UpdateAsync(dt);
                 await Shell.Current.GoToAsync("..");
             }
