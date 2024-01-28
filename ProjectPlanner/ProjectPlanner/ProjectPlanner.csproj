@@ -75,6 +75,9 @@
 	  <MauiXaml Update="Views\DailyDisplay.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\DailyTaskForm.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\ProjectForm.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

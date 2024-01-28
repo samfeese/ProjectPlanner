@@ -21,5 +21,9 @@
         Title="Daily Display"
         ContentTemplate="{DataTemplate local:DailyDisplay}"
         Route="DailyDisplay" />
+    <ShellContent
+        Title="Daily Display"
+        ContentTemplate="{DataTemplate local:DailyTaskForm}"
+        Route="DailyTaskForm" />
 
 </Shell>

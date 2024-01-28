@@ -10,6 +10,7 @@ namespace ProjectPlanner
             Routing.RegisterRoute("mainPage", typeof(MainPage));
             Routing.RegisterRoute("projectForm", typeof(ProjectForm));
             Routing.RegisterRoute("dailyDisplay", typeof(DailyDisplay));
+            Routing.RegisterRoute("dailyTaskForm", typeof(DailyTaskForm));
         }
     }
 }

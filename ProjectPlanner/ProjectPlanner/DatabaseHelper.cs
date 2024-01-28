@@ -91,10 +91,7 @@ namespace ProjectPlanner
         public async Task<List<DailyTask>> GetAllDailyByProjectIdAndDate(int key, DateTime date)
         {
             await Init();
-            // Await the task to get the actual list
             var allTasks = await _db.Table<DailyTask>().Where(t => t.AssociatedProjectId == key).ToListAsync();
-
-            // Filter the tasks using LINQ and then convert to a list
             var filteredTasks = allTasks.Where(t => t.Date.Date == date.Date).ToList();
 
             return filteredTasks;

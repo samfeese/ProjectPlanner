@@ -11,15 +11,17 @@ using System.Windows.Input;
 namespace ProjectPlanner.ViewModels
 {
     [QueryProperty(nameof(ProjectID), "projectId")]
-    class DailyDisplayViewModel 
+    class DailyDisplayViewModel  : INotifyPropertyChanged
     {
         public int _projectId = -1;
         readonly DatabaseHelper db;
         private ObservableCollection<DailyTask> DailyTasksByDate { get; set; }
         private Project _project { get; set; }
         private DateTime displayDate = DateTime.Now;
+        private string dateString = string.Empty;
         public ICommand IncrementDate { get; set; }
         public ICommand DecrementDate { get; set; }
+        public ICommand NavDailyTaskForm { get; set; }
 
         public DailyDisplayViewModel() {
             DailyTasksByDate = new ObservableCollection<DailyTask>();
@@ -27,6 +29,7 @@ namespace ProjectPlanner.ViewModels
 
             IncrementDate = new Command(IncrementDisplayDate);
             DecrementDate = new Command(DecrementDisplayDate);
+            NavDailyTaskForm = new Command(NavToTaskForm);
 
 
         }
@@ -48,6 +51,16 @@ namespace ProjectPlanner.ViewModels
             {
                 displayDate = value;
                 OnPropertyChanged(nameof(DisplayDate));
+            }
+        }
+
+        public string DisplayDateString
+        {
+            get => dateString;
+            set
+            {
+                dateString = value;
+                OnPropertyChanged(nameof(DisplayDateString));
             }
         }
 
@@ -73,13 +86,14 @@ namespace ProjectPlanner.ViewModels
 
         public async Task Load()
         {
-
+            DisplayDateString = DisplayDate.ToString("yyyy-MM-dd");
             Project p = await db.GetSingleAsync<Project>(_projectId);
 
             List<DailyTask> dbDailyTasks = await db.GetAllDailyByProjectIdAndDate(_projectId, DisplayDate);
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 CurrentProject = p;
+                OnPropertyChanged(nameof(CurrentProject));
                 GetTasksByDate.Clear();
                 foreach (DailyTask dt in dbDailyTasks)
                 {
@@ -94,6 +108,7 @@ namespace ProjectPlanner.ViewModels
         private async void IncrementDisplayDate()
         {
             DisplayDate = DisplayDate.AddDays(1);
+            DisplayDateString = DisplayDate.ToString("yyyy-MM-dd");
 
             List<DailyTask> dbDailyTasks = await db.GetAllDailyByProjectIdAndDate(ProjectID, DisplayDate);
 
@@ -113,6 +128,7 @@ namespace ProjectPlanner.ViewModels
         private async void DecrementDisplayDate()
         {
             DisplayDate = DisplayDate.AddDays(-1);
+            DisplayDateString = DisplayDate.ToString("yyyy-MM-dd");
 
             List<DailyTask> dbDailyTasks = await db.GetAllDailyByProjectIdAndDate(ProjectID, DisplayDate);
             MainThread.BeginInvokeOnMainThread(() =>
@@ -126,6 +142,17 @@ namespace ProjectPlanner.ViewModels
 
             }
             );
+        }
+
+        private async void NavToTaskForm()
+        {
+            if (GetTasksByDate.Count >= 10)
+            {
+                //await MaxCoursesAlert();
+                return;
+            }
+            await Shell.Current.GoToAsync($"dailyTaskForm?projectId={ProjectID}&taskDateString={DisplayDateString}");
+
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
