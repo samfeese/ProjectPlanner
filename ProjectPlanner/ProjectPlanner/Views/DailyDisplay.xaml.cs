@@ -6,9 +6,12 @@ namespace ProjectPlanner.Views;
 public partial class DailyDisplay : ContentPage
 {
     public DailyDisplay()
-	{
-		InitializeComponent();
-        BindingContext = new DailyDisplayViewModel();
+    {
+        InitializeComponent();
+        var viewModel = new DailyDisplayViewModel();
+        BindingContext = viewModel;
+
+       
 
     }
     protected override async void OnAppearing()
@@ -22,16 +25,11 @@ public partial class DailyDisplay : ContentPage
 
 
     }
-
-    private void OnCheckBoxCheckedChanged(object sender, CheckedChangedEventArgs e)
+    private void OnNotesEditorUnfocused(object sender, FocusEventArgs e)
     {
-        if (sender is CheckBox checkBox && checkBox.BindingContext is DailyTask task)
+        if (BindingContext is DailyDisplayViewModel viewModel)
         {
-            var viewModel = (DailyDisplayViewModel)BindingContext;
-            if (!viewModel.IsLoadingData)
-            {
-                viewModel.UpdateCompleteCommand(task);
-            }
+            viewModel.SaveNoteCommand.Execute(null);
         }
     }
 }

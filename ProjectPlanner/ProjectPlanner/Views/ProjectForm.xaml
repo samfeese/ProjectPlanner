@@ -8,12 +8,12 @@
     <ScrollView>
         <StackLayout Spacing="10">
 
-            <Label Text="Term Name" HorizontalOptions="CenterAndExpand" WidthRequest="100"/>
+            <Label Text="Project Name" HorizontalOptions="CenterAndExpand" WidthRequest="100"/>
             <Entry Text="{Binding ProjectName}" HorizontalOptions="FillAndExpand" Margin="20,0"/>
 
 
             <Button Text="{Binding SaveButtonText}" Command="{Binding SaveProject}"  TextColor="White" Background="#1A5D7F"  Margin="20, 5, 20, 0" Padding="10"/>
-            <Button Text="Delete Term" Command="{Binding DeleteProject}" IsVisible="{Binding IsDeleteVisible}" Background="#BE1E2D" TextColor="White"  Margin="20, 5, 20, 0" Padding="10" />
+            <Button Text="Delete Project" Command="{Binding DeleteProject}" IsVisible="{Binding IsDeleteVisible}" Background="#BE1E2D" TextColor="White"  Margin="20, 5, 20, 0" Padding="10" />
         </StackLayout>
     </ScrollView>
 </ContentPage> 

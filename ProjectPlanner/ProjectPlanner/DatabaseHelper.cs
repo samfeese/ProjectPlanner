@@ -22,6 +22,7 @@ namespace ProjectPlanner
             _db = new SQLiteAsyncConnection(Constants.DatabasePath, Constants.Flags);
             var result1 = await _db.CreateTableAsync<Project>();
             var result2 = await _db.CreateTableAsync<DailyTask>();
+            var result3 = await _db.CreateTableAsync<Notes>();
         }
 
         public async Task<List<T>> GetAllAsync<T>() where T : new()
@@ -61,6 +62,8 @@ namespace ProjectPlanner
             await _db.ExecuteAsync("UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='Project'");
             await _db.ExecuteAsync("DELETE FROM DailyTask");
             await _db.ExecuteAsync("UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='DailyTask'");
+            await _db.ExecuteAsync("DELETE FROM Notes");
+            await _db.ExecuteAsync("UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='Notes'");
         }
 
         public async Task Reseed()
@@ -95,6 +98,16 @@ namespace ProjectPlanner
             var filteredTasks = allTasks.Where(t => t.Date.Date == date.Date).ToList();
 
             return filteredTasks;
+        }
+
+        public async Task<Notes> GetNotesByProjectAndDate(int key, DateTime date)
+        {
+            await Init();
+            var Notes = await _db.Table<Notes>().Where(t => t.AssociatedProjectId == key).ToListAsync();
+            var note = Notes.FirstOrDefault(t => t.Date.Date == date.Date);
+
+            return note;
+
         }
     }
 }

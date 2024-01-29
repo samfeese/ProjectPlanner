@@ -15,6 +15,7 @@ namespace ProjectPlanner.ViewModels
         public DateTime _taskDate;
         public string _taskDateString;
         readonly DatabaseHelper db;
+        private DailyTask daily;
 
         private string taskName;
         private bool completed;
@@ -101,8 +102,12 @@ namespace ProjectPlanner.ViewModels
         public async void RetrieveTask()
         {
             DailyTask dt = await db.GetSingleAsync<DailyTask>(_taskId);
+
+
             if (dt != null)
             {
+                daily = dt;
+                IsDeleteVisible = true; 
                 TaskName = dt.Name;
                 Completed = dt.Complete;
                 if (Completed)
@@ -132,7 +137,7 @@ namespace ProjectPlanner.ViewModels
             if (_taskId > 0)
             {
                 bool isComplete = SelectedStatus == "Complete";
-                DailyTask dt = new DailyTask { Id = _taskId, Name = TaskName, Date = TaskDate, Complete=isComplete};
+                DailyTask dt = new DailyTask { Id = _taskId, Name = TaskName, Date = TaskDate, Complete = isComplete, AssociatedProjectId = daily.AssociatedProjectId };
                 await db.UpdateAsync(dt);
                 await Shell.Current.GoToAsync("..");
             }

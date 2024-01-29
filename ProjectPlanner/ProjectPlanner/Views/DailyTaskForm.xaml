@@ -15,7 +15,7 @@
                  ItemsSource="{Binding StatusOptions}"
                  SelectedItem="{Binding SelectedStatus}" />
             <Button Text="{Binding SaveButtonText}" Command="{Binding SaveTask}"  TextColor="White" Background="#1A5D7F"  Margin="20, 5, 20, 0" Padding="10"/>
-            <Button Text="Delete Course" Command="{Binding DeleteTask}" IsVisible="{Binding IsDeleteVisible}" Background="#BE1E2D" TextColor="White"  Margin="20, 5, 20, 0" Padding="10" />
+            <Button Text="Delete Task" Command="{Binding DeleteTask}" IsVisible="{Binding IsDeleteVisible}" Background="#BE1E2D" TextColor="White"  Margin="20, 5, 20, 0" Padding="10" />
         </StackLayout>
     </ScrollView>
 </ContentPage>

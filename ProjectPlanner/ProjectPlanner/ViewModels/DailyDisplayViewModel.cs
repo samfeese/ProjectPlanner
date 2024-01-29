@@ -23,13 +23,16 @@ namespace ProjectPlanner.ViewModels
         public ICommand IncrementDate { get; set; }
         public ICommand DecrementDate { get; set; }
         public ICommand NavDailyTaskForm { get; set; }
-        public Command TaskSelected { get; set; }
+        public ICommand TaskSelected { get; set; }
+ 
 
         private bool _isLoadingData = false;
         private DailyTask selectedTask;
+        public ICommand SaveNoteCommand => new Command(SaveNotes);
         public DailyDisplayViewModel() {
             DailyTasksByDate = new ObservableCollection<DailyTask>();
             db = new DatabaseHelper();
+            _currentNote = new Notes { Id = -1, Date = DisplayDate, AssociatedProjectId=ProjectID };
 
             IncrementDate = new Command(IncrementDisplayDate);
             DecrementDate = new Command(DecrementDisplayDate);
@@ -38,7 +41,6 @@ namespace ProjectPlanner.ViewModels
 
 
         }
-
         public DailyTask SelectedTask
         {
             get => selectedTask;
@@ -74,10 +76,12 @@ namespace ProjectPlanner.ViewModels
         public DateTime DisplayDate 
         {
             get => displayDate;
-            set  
+            set
             {
                 displayDate = value;
                 OnPropertyChanged(nameof(DisplayDate));
+
+                SelectDateChange();
             }
         }
 
@@ -137,11 +141,15 @@ namespace ProjectPlanner.ViewModels
             _isLoadingData = true;
             DisplayDateString = DisplayDate.ToString("yyyy-MM-dd");
             Project p = await db.GetSingleAsync<Project>(_projectId);
-
+            Notes n = await db.GetNotesByProjectAndDate(_projectId, DisplayDate);
             List<DailyTask> dbDailyTasks = await db.GetAllDailyByProjectIdAndDate(_projectId, DisplayDate);
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 CurrentProject = p;
+                if(n != null)
+                {
+                    _currentNote = n;
+                }
                 OnPropertyChanged(nameof(CurrentProject));
                 GetTasksByDate.Clear();
                 foreach (DailyTask dt in dbDailyTasks)
@@ -159,10 +167,19 @@ namespace ProjectPlanner.ViewModels
             DisplayDate = DisplayDate.AddDays(1);
             DisplayDateString = DisplayDate.ToString("yyyy-MM-dd");
 
+            Notes n = await db.GetNotesByProjectAndDate(_projectId, DisplayDate);
             List<DailyTask> dbDailyTasks = await db.GetAllDailyByProjectIdAndDate(ProjectID, DisplayDate);
 
             MainThread.BeginInvokeOnMainThread(() =>
             {
+                if (n != null)
+                {
+                    _currentNote = n;
+                }
+                else
+                {
+                    _currentNote = new Notes { Id = -1, Date = DisplayDate, AssociatedProjectId = ProjectID };
+                }
                 GetTasksByDate.Clear();
                 foreach (DailyTask dt in dbDailyTasks)
                 {
@@ -177,6 +194,35 @@ namespace ProjectPlanner.ViewModels
         private async void DecrementDisplayDate()
         {
             DisplayDate = DisplayDate.AddDays(-1);
+            DisplayDateString = DisplayDate.ToString("yyyy-MM-dd");
+
+            Notes n = await db.GetNotesByProjectAndDate(_projectId, DisplayDate);
+            List<DailyTask> dbDailyTasks = await db.GetAllDailyByProjectIdAndDate(ProjectID, DisplayDate);
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                if (n != null)
+                {
+                    _currentNote = n;
+                } else
+                {
+                    _currentNote = new Notes { Id = -1, Date = DisplayDate, AssociatedProjectId = ProjectID };
+                }
+                GetTasksByDate.Clear();
+                foreach (DailyTask dt in dbDailyTasks)
+                {
+                    GetTasksByDate.Add(dt);
+                    OnPropertyChanged(nameof(GetTasksByDate));
+                }
+
+            }
+            );
+        }
+        private void SelectDateChange()
+        {
+            SelectDateChangeAsync();
+        }
+        private async void SelectDateChangeAsync()
+        {
             DisplayDateString = DisplayDate.ToString("yyyy-MM-dd");
 
             List<DailyTask> dbDailyTasks = await db.GetAllDailyByProjectIdAndDate(ProjectID, DisplayDate);
@@ -202,6 +248,33 @@ namespace ProjectPlanner.ViewModels
             }
             await Shell.Current.GoToAsync($"dailyTaskForm?projectId={ProjectID}&taskDateString={DisplayDateString}");
 
+        }
+
+        private Notes _currentNote;
+
+        public string CurrentNote
+        {
+            get => _currentNote?.Note;
+            set
+            {
+                if (_currentNote.Note != value)
+                {
+                    _currentNote.Note = value;
+                    OnPropertyChanged(nameof(CurrentNote));
+                }
+            }
+        }
+
+        public async void SaveNotes()
+        {
+            if (_currentNote.Id > -1)
+            {
+                await db.UpdateAsync(_currentNote);
+            }
+            else
+            {
+                await db.AddAsync(_currentNote);
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

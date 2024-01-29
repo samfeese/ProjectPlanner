@@ -3,7 +3,8 @@
              xmlns:vm="clr-namespace:ProjectPlanner.ViewModels"
              xmlns:m="clr-namespace:ProjectPlanner.Models"
              x:DataType="vm:DailyDisplayViewModel"
-             x:Class="ProjectPlanner.Views.DailyDisplay">
+             x:Class="ProjectPlanner.Views.DailyDisplay"
+             Title="Daily Tasks">
     <Grid RowDefinitions="Auto,*,Auto" ColumnDefinitions="*,1*,*">
 
         <StackLayout Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="3" Orientation="Vertical" BackgroundColor="Pink">
@@ -36,7 +37,17 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="m:DailyTask">
                         <FlexLayout Direction="Row" JustifyContent="SpaceBetween"  Margin="20" Padding="10"  BackgroundColor="#4E4D4D">
-                            <Image Source="{Binding Complete, Converter={StaticResource BoolToImage}}" WidthRequest="24" HeightRequest="24" />
+                            <Image WidthRequest="24" HeightRequest="24">
+                                <Image.Triggers>
+                                    <DataTrigger TargetType="Image" Binding="{Binding Complete}" Value="True">
+                                        <Setter Property="Source" Value="checkmark.png" />
+                                        <Setter Property="IsVisible" Value="True" />
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Image" Binding="{Binding Complete}" Value="False">
+                                        <Setter Property="IsVisible" Value="False" />
+                                    </DataTrigger>
+                                </Image.Triggers>
+                            </Image>
                             <Label TextColor="White" FontSize="Micro" Text="{Binding Name}" VerticalOptions="Center" Margin="10, 0, 30, 0" />
                         </FlexLayout>
                     </DataTemplate>
@@ -46,20 +57,37 @@
         </StackLayout>
 
 
-        <!--Calendar and Notes Section-->
         <Grid Grid.Row="1" Grid.Column="3" BackgroundColor="LightGray"
          RowDefinitions="*,3*">
 
             <!-- Calendar View -->
             <StackLayout Grid.Row="0" Orientation="Vertical" BackgroundColor="LightGray">
-                <Label Text="Calendar" HorizontalOptions="Center" VerticalOptions="Center"/>
-                <!-- Insert your calendar view here -->
+                <Label Text="Select Date" HorizontalOptions="Center" VerticalOptions="Center"/>
+                <DatePicker  x:Name="datePicker"
+                    Date="{Binding DisplayDate, Mode=TwoWay}"
+                    Format="M" 
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center"  />
             </StackLayout>
 
             <!-- Notes Section -->
             <StackLayout Grid.Row="1" Orientation="Vertical" BackgroundColor="LightGreen">
                 <Label Text="Notes" HorizontalOptions="Center" VerticalOptions="Center"/>
-                <!-- Insert your notes content here -->
+                <Frame Grid.Row="1" Grid.Column="3" 
+                   Padding="10"
+                   CornerRadius="5"
+                   BackgroundColor="White"
+                   BorderColor="LightGray"
+                   HorizontalOptions="FillAndExpand"
+                   VerticalOptions="FillAndExpand"
+                   Margin="10">
+                    <Editor Text="{Binding CurrentNote, Mode=TwoWay}" 
+                        Placeholder="Enter notes here..."
+                        AutoSize="TextChanges"
+                        BackgroundColor="White"
+                        TextColor="Black" 
+                        Unfocused="OnNotesEditorUnfocused" />
+                </Frame>
             </StackLayout>
 
         </Grid>
