@@ -12,7 +12,11 @@
         <StackLayout Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="3" Orientation="Vertical" BackgroundColor="Pink">
             <BoxView Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Color="Azure"/>
 
-            <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Text="{Binding CurrentProject.Name}" HorizontalOptions="Center" VerticalOptions="Center" TextColor="Black" Padding="0, 10"/>
+            <Grid ColumnDefinitions="5*, *" Grid.Row="0">
+                <Label Grid.Column="0" Grid.ColumnSpan="3" Text="{Binding CurrentProject.Name}" HorizontalOptions="Center" VerticalOptions="Center" TextColor="Black" Padding="0, 10"/>
+                <Button Grid.Column="1" Text="Sprint" Command="{Binding SprintViewBtn}"  HorizontalOptions="Fill" VerticalOptions="Center" FontSize="12" BackgroundColor="#008080" />
+            </Grid>
+            
             <Grid VerticalOptions="FillAndExpand"  ColumnDefinitions="*,*,*">
 
                 <Button Grid.Column="0"  Text="Prev" TextColor="White" WidthRequest="60" HeightRequest="40" Margin="0,5" BackgroundColor="#1A5D7F" VerticalOptions="Start"
@@ -89,7 +93,7 @@
                         BackgroundColor="White"
                         TextColor="Black" />
                 </Frame>
-                <Button Text="Save" Clicked="OnNotesSaved" />
+                <Button Text="Save" Clicked="OnNotesSaved" BackgroundColor="#1A5D7F" />
             </StackLayout>
 
         </Grid>

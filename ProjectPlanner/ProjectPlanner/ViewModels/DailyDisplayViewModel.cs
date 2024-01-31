@@ -24,6 +24,7 @@ namespace ProjectPlanner.ViewModels
         public ICommand DecrementDate { get; set; }
         public ICommand NavDailyTaskForm { get; set; }
         public ICommand TaskSelected { get; set; }
+        public ICommand SprintViewBtn { get; set; }
         private Notes defaultNote { get; set; }
  
 
@@ -46,6 +47,7 @@ namespace ProjectPlanner.ViewModels
             DecrementDate = new Command(DecrementDisplayDate);
             NavDailyTaskForm = new Command(NavToTaskForm);
             TaskSelected = new Command(OnTermSelected);
+            SprintViewBtn = new Command(NavSprintView);
 
 
         }
@@ -279,6 +281,10 @@ namespace ProjectPlanner.ViewModels
             }
             await Shell.Current.GoToAsync($"dailyTaskForm?projectId={ProjectID}&taskDateString={DisplayDateString}");
 
+        }
+        private async void NavSprintView()
+        {
+            await Shell.Current.GoToAsync($"sprintView?projectId={ProjectID}&taskDateString={DisplayDateString}");
         }
 
         private Notes _currentNote;
