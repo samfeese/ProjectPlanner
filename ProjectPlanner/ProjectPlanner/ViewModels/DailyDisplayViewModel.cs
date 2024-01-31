@@ -24,6 +24,7 @@ namespace ProjectPlanner.ViewModels
         public ICommand DecrementDate { get; set; }
         public ICommand NavDailyTaskForm { get; set; }
         public ICommand TaskSelected { get; set; }
+        private Notes defaultNote { get; set; }
  
 
         private bool _isLoadingData = false;
@@ -32,7 +33,14 @@ namespace ProjectPlanner.ViewModels
         public DailyDisplayViewModel() {
             DailyTasksByDate = new ObservableCollection<DailyTask>();
             db = new DatabaseHelper();
-            _currentNote = new Notes { Id = -1, Date = DisplayDate, AssociatedProjectId=ProjectID };
+            defaultNote = new Notes
+            {
+                Id = ProjectID,
+                Date = DisplayDate,
+                AssociatedProjectId = ProjectID,
+                Note = ""
+            };
+            _currentNote = defaultNote;
 
             IncrementDate = new Command(IncrementDisplayDate);
             DecrementDate = new Command(DecrementDisplayDate);
@@ -146,9 +154,15 @@ namespace ProjectPlanner.ViewModels
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 CurrentProject = p;
-                if(n != null)
+                if(n != null && n.Note != null)
                 {
                     _currentNote = n;
+                    CurrentNote = n.Note;
+                }
+                else
+                {
+                    _currentNote.AssociatedProjectId = CurrentProject.Id;
+                    CurrentNote = "";
                 }
                 OnPropertyChanged(nameof(CurrentProject));
                 GetTasksByDate.Clear();
@@ -172,13 +186,15 @@ namespace ProjectPlanner.ViewModels
 
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                if (n != null)
+                if (n != null && n.Note != null)
                 {
                     _currentNote = n;
+                    CurrentNote = n.Note;
                 }
                 else
                 {
-                    _currentNote = new Notes { Id = -1, Date = DisplayDate, AssociatedProjectId = ProjectID };
+                    _currentNote.AssociatedProjectId = CurrentProject.Id;
+                    CurrentNote = "";
                 }
                 GetTasksByDate.Clear();
                 foreach (DailyTask dt in dbDailyTasks)
@@ -200,12 +216,15 @@ namespace ProjectPlanner.ViewModels
             List<DailyTask> dbDailyTasks = await db.GetAllDailyByProjectIdAndDate(ProjectID, DisplayDate);
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                if (n != null)
+                if (n != null && n.Note != null)
                 {
                     _currentNote = n;
-                } else
+                    CurrentNote = n.Note;
+                }
+                else
                 {
-                    _currentNote = new Notes { Id = -1, Date = DisplayDate, AssociatedProjectId = ProjectID };
+                    _currentNote.AssociatedProjectId = CurrentProject.Id;
+                    CurrentNote = "";
                 }
                 GetTasksByDate.Clear();
                 foreach (DailyTask dt in dbDailyTasks)
@@ -226,11 +245,23 @@ namespace ProjectPlanner.ViewModels
             DisplayDateString = DisplayDate.ToString("yyyy-MM-dd");
 
             List<DailyTask> dbDailyTasks = await db.GetAllDailyByProjectIdAndDate(ProjectID, DisplayDate);
+            Notes n = await db.GetNotesByProjectAndDate(_projectId, DisplayDate);
             MainThread.BeginInvokeOnMainThread(() =>
             {
+                if (n != null && n.Note != null)
+                {
+                    _currentNote = n;
+                    CurrentNote = n.Note;
+                }
+                else
+                {
+                    _currentNote.AssociatedProjectId = CurrentProject.Id;
+                    CurrentNote = "";
+                }
                 GetTasksByDate.Clear();
                 foreach (DailyTask dt in dbDailyTasks)
                 {
+                    
                     GetTasksByDate.Add(dt);
                     OnPropertyChanged(nameof(GetTasksByDate));
                 }
@@ -254,14 +285,13 @@ namespace ProjectPlanner.ViewModels
 
         public string CurrentNote
         {
-            get => _currentNote?.Note;
+            get => _currentNote.Note;
             set
             {
-                if (_currentNote.Note != value)
-                {
-                    _currentNote.Note = value;
-                    OnPropertyChanged(nameof(CurrentNote));
-                }
+
+                _currentNote.Note = value;
+                OnPropertyChanged(nameof(CurrentNote));
+                
             }
         }
 

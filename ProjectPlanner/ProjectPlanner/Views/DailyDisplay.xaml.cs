@@ -25,11 +25,22 @@ public partial class DailyDisplay : ContentPage
 
 
     }
-    private void OnNotesEditorUnfocused(object sender, FocusEventArgs e)
+    private void OnNotesSaved(object sender, EventArgs e)
     {
         if (BindingContext is DailyDisplayViewModel viewModel)
         {
             viewModel.SaveNoteCommand.Execute(null);
+            NotesEditor.Unfocus();
+        }
+    }
+    private void OnLayoutTap(object sender, EventArgs e)
+    {
+        if (NotesEditor.IsFocused)
+        {
+            NotesEditor.Unfocus();
+            NotesEditor.IsEnabled = false;
+            NotesEditor.IsEnabled = true;
+            
         }
     }
 }
