@@ -84,6 +84,12 @@
 	  <MauiXaml Update="Views\ProjectForm.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\SprintForm.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\SprintPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\SprintView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

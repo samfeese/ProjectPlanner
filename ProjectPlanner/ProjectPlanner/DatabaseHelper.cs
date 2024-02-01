@@ -24,6 +24,7 @@ namespace ProjectPlanner
             var result2 = await _db.CreateTableAsync<DailyTask>();
             var result3 = await _db.CreateTableAsync<Notes>();
             var result4 = await _db.CreateTableAsync<Sprint>();
+            var result5 = await _db.CreateTableAsync<SprintTask>();
         }
 
         public async Task<List<T>> GetAllAsync<T>() where T : new()
@@ -67,6 +68,8 @@ namespace ProjectPlanner
             await _db.ExecuteAsync("UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='Notes'");
             await _db.ExecuteAsync("DELETE FROM Sprint");
             await _db.ExecuteAsync("UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='Sprint'");
+            await _db.ExecuteAsync("DELETE FROM SprintTask");
+            await _db.ExecuteAsync("UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='SprintTask'");
         }
 
         public async Task Reseed()
@@ -95,6 +98,11 @@ namespace ProjectPlanner
             //Sprints
             Sprint s1 = new Sprint { Name="First Sprint", AssociatedProjectId = 1, StartDate = date, EndDate = date.AddDays(14) };
             await AddAsync(s1);
+
+            //SprintTask
+            SprintTask st1 = new SprintTask { Name = "SprintThis", AssociatedSprintId = 1, Complete = false };
+            await AddAsync(st1);
+
         }
 
         //Custom Fields Here
@@ -130,6 +138,13 @@ namespace ProjectPlanner
         {
             await Init();
             var query = _db.Table<Sprint>().Where(t => t.AssociatedProjectId == key);
+            return await query.ToListAsync();
+        }
+        
+        public async Task<List<SprintTask>> GetAllSprintTasksBySprintId(int key)
+        {
+            await Init();
+            var query = _db.Table<SprintTask>().Where(t => t.AssociatedSprintId == key);
             return await query.ToListAsync();
         }
     }

@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:ProjectPlanner.ViewModels"
+             xmlns:m="clr-namespace:ProjectPlanner.Models"
              x:Class="ProjectPlanner.Views.SprintView"
              x:DataType="vm:SprintViewViewModel"
              Title="SprintView">
@@ -11,9 +12,36 @@
 
             <Grid ColumnDefinitions="5*, *" Grid.Row="0">
                 <Label Grid.Column="0" Grid.ColumnSpan="3" Text="{Binding CurrentProject.Name}" HorizontalOptions="Center" VerticalOptions="Center" TextColor="Black" Padding="0, 10"/>
-                <Button Grid.Column="1" Text="Sprint" Command="{Binding SprintViewBtn}"  HorizontalOptions="Fill" VerticalOptions="Center" FontSize="12" BackgroundColor="#008080" />
+                <Button Grid.Column="1" Text="Daily" Command="{Binding SprintViewBtn}"  HorizontalOptions="Fill" VerticalOptions="Center" FontSize="12" BackgroundColor="#008080" />
             </Grid>
 
         </StackLayout>
+        <StackLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Vertical" BackgroundColor="Azure">
+            <CollectionView ItemsSource="{Binding GetSprints}"
+             SelectionMode="Single"
+             SelectedItem="{Binding SelectedSprint}"       
+             SelectionChangedCommand="{Binding SprintAction}"
+             HorizontalOptions="FillAndExpand"
+             x:Name="SprintTile">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="m:Sprint">
+                    <FlexLayout Direction="Row" JustifyContent="SpaceBetween"  Margin="20" Padding="10"  BackgroundColor="#4E4D4D">
+                        <StackLayout Orientation="Horizontal" Spacing="5" HorizontalOptions="Start" VerticalOptions="Center" Margin="5, 0, 0, 0">
+                            <Label TextColor="White" FontSize="Micro" Text="{Binding StartDate, StringFormat='{0:MM/dd/yyyy}'}" />
+                            <Label TextColor="White" FontSize="Micro" Text="-" />
+                            <Label TextColor="White" FontSize="Micro"  Text="{Binding EndDate, StringFormat='{0:MM/dd/yyyy}'}" />
+                        </StackLayout>
+                        <Label TextColor="White" FontSize="Micro" Text="{Binding Name}" VerticalOptions="Center" Margin="10, 0, 30, 0" />
+                        <Button Text="Edit" TextColor="White" WidthRequest="60" HeightRequest="40" Margin="0, 5, 5, 2" BackgroundColor="#1A5D7F"
+                            VerticalOptions="Center" HorizontalOptions="End" 
+                            Command="{Binding Path=BindingContext.EditSprint, Source={x:Reference SprintTile}}"
+                            CommandParameter="{Binding .}" />
+                        </FlexLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        <Button Text="Add Sprint" Margin="20" Padding="10" TextColor="White" Background="#1A5D7F" Command="{Binding NavSprintForm}" />
+        </StackLayout>
+        
     </Grid>
 </ContentPage>

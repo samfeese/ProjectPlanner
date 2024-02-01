@@ -1,4 +1,5 @@
-﻿using ProjectPlanner.Models;
+﻿using AndroidX.DynamicAnimation;
+using ProjectPlanner.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -20,6 +21,10 @@ namespace ProjectPlanner.ViewModels
         readonly DatabaseHelper db;
 
         public ICommand SprintViewBtn { get; set; }
+        public ICommand SprintAction {  get; set; }
+        public ICommand NavSprintForm { get; set; }
+        public ICommand EditSprint { get; set; }
+        public Sprint _selectedSprint { get; set; }
 
         private ObservableCollection<Sprint> AllSprints { get; set; }
         public SprintViewViewModel()
@@ -28,6 +33,10 @@ namespace ProjectPlanner.ViewModels
             AllSprints = new ObservableCollection<Sprint>();
 
             SprintViewBtn = new Command(NavSprintView);
+            SprintAction = new Command(SprintSelect);
+            NavSprintForm = new Command(NavToSprintForm);
+            EditSprint = new Command<Sprint>(OnSprintEdit);
+
         }
 
         public int ProjectID
@@ -49,7 +58,24 @@ namespace ProjectPlanner.ViewModels
                 OnPropertyChanged(nameof(CurrentProject));
             }
         }
-
+        public ObservableCollection<Sprint> GetSprints
+        {
+            get => AllSprints;
+            set
+            {
+                AllSprints = value;
+                OnPropertyChanged(nameof(GetSprints));
+            }
+        }
+        public Sprint SelectedSprint
+        {
+            get => _selectedSprint;
+            set
+            {
+                _selectedSprint = value;
+                OnPropertyChanged(nameof(SelectedSprint));
+            }
+        }
 
         public async Task Load()
         {
@@ -70,9 +96,29 @@ namespace ProjectPlanner.ViewModels
             });
         }
 
+        private async void SprintSelect()
+        {
+            if (_selectedSprint != null)
+            {
+               await Shell.Current.GoToAsync($"sprintPage?sprintId={SelectedSprint.Id}");
+            }
+        }
+
         private async void NavSprintView()
         {
             await Shell.Current.GoToAsync($"dailyDisplay?projectId={ProjectID}");
+        }
+
+        private async void NavToSprintForm()
+        {
+            await Shell.Current.GoToAsync($"sprintForm?projectId={ProjectID}");
+        }
+        private async void OnSprintEdit(Sprint s)
+        {
+            if (s != null)
+            {
+                await Shell.Current.GoToAsync($"sprintForm?projectId={ProjectID}&sprintId={s.Id}");
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

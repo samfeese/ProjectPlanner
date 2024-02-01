@@ -60,16 +60,17 @@ namespace ProjectPlanner.ViewModels
         private void OnProjectSelected()
         {
 
-            if (selectedProject != null)
+            if (selectedProject != null && _isEditing == false)
             {          
                 Shell.Current.GoToAsync($"dailyDisplay?projectId={SelectedProject.Id}");
 
             }
         }
        
-
+        private bool _isEditing = false;
         private async void OnEditTerm(Project p)
         {
+            _isEditing = true;
             if (p != null)
             {
                 SelectedProject = p;
@@ -80,6 +81,7 @@ namespace ProjectPlanner.ViewModels
 
         public async Task Load()
         {
+            _isEditing = false;
             List<Project> dbProjects = await db.GetAllAsync<Project>();
             MainThread.BeginInvokeOnMainThread(() =>
             {
