@@ -18,7 +18,8 @@
         <StackLayout Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Vertical" BackgroundColor="Azure">
             <CollectionView ItemsSource="{Binding GetSprints}"
               SelectionMode="Single"
-              
+              SelectedItem="{Binding SelectedTask}"       
+              SelectionChangedCommand="{Binding TaskSelected}"
               HorizontalOptions="FillAndExpand"
               x:Name="SprintTile">
                 <CollectionView.ItemTemplate>
@@ -29,6 +30,7 @@
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
+            <Button Text="Add Task" Margin="20" Padding="10" TextColor="White" Background="#1A5D7F" Command="{Binding NavTaskForm}" />
         </StackLayout>
 
     </Grid>

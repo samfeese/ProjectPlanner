@@ -1,6 +1,7 @@
 ﻿using ProjectPlanner.Models;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Windows.Input;
 
 namespace ProjectPlanner.ViewModels
 {
@@ -10,12 +11,16 @@ namespace ProjectPlanner.ViewModels
         private int _sprintId;
         private ObservableCollection<SprintTask> AllSprints { get; set; }
         private Sprint _currentSprint {  get; set; }
-
+        private SprintTask selectedTask;
+        public ICommand TaskSelected { get; set; }
+        public ICommand NavTaskForm { get; set; }
         readonly DatabaseHelper db;
         public SprintPageViewModel()
         {
             AllSprints = new ObservableCollection<SprintTask>();
             db = new DatabaseHelper();
+            TaskSelected = new Command(OnTaskSelected);
+            NavTaskForm = new Command(NavToTaskForm);
 
         }
 
@@ -28,6 +33,19 @@ namespace ProjectPlanner.ViewModels
 
             }
         }
+        public SprintTask SelectedTask
+        {
+            get => selectedTask;
+            set
+            {
+                if (selectedTask != value)
+                {
+                    selectedTask = value;
+                    OnPropertyChanged(nameof(SelectedTask));
+                }
+            }
+        }
+
         public ObservableCollection<SprintTask> GetSprints
         {
             get => AllSprints;
@@ -63,6 +81,27 @@ namespace ProjectPlanner.ViewModels
                 }
 
             });
+
+        }
+
+        private void OnTaskSelected()
+        {
+
+            if (selectedTask != null)
+            {
+                Shell.Current.GoToAsync($"sprintTaskForm?taskId={SelectedTask.Id}");
+
+            }
+        }
+
+        private async void NavToTaskForm()
+        {
+            if (GetSprints.Count >= 10)
+            {
+                //await MaxCoursesAlert();
+                return;
+            }
+            await Shell.Current.GoToAsync($"sprintTaskForm?sprintId={SprintId}");
 
         }
 
