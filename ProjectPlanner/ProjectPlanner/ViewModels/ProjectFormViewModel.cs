@@ -57,19 +57,24 @@ namespace ProjectPlanner.ViewModels
             }
         }
 
-       
 
 
 
-        //private bool Validate()
-        //{
-        //    if (EndDate < StartDate)
-        //    {
-        //        Shell.Current.DisplayAlert("End Date Conflict", "End date must be after start date", "OK");
-        //       return false;
-        //    }
-        //    return true;
-        //}
+        private Task Alert(string title, string message)
+        {
+            return Shell.Current.DisplayAlert(title, message, "OK");
+        }
+        private bool Validate()
+        {
+
+            if (string.IsNullOrWhiteSpace(ProjectName))
+            {
+                Alert("Validation Error", "Project name is required.");
+                return false;
+            }
+
+            return true;
+        }
 
 
         private string _saveButtonText  = "Add Project";
@@ -114,7 +119,7 @@ namespace ProjectPlanner.ViewModels
         private async void AddProject()
         {
 
-            bool isValid = true; /*Validate()*/
+            bool isValid = Validate();  
             if (isValid) 
             { 
                 if (_projectId > 0)

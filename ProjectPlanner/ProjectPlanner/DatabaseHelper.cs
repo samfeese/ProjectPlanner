@@ -57,6 +57,14 @@ namespace ProjectPlanner
             return await _db.DeleteAsync<T>(key);
         }
 
+        public async Task<List<Project>> GetAllByNameAsync(string key)
+        {
+            await Init();
+            return await _db.Table<Project>()
+                    .Where(x => x.Name.Contains(key))
+                    .ToListAsync();
+        }
+
         public async Task Truncate()
         {
             await Init();
@@ -80,6 +88,10 @@ namespace ProjectPlanner
             // Projects
             Project p = new Project { Id = 1, Name = "Project Cool Name" };
             await AddAsync(p);
+            Project p2 = new Project { Id = 2, Name = "Project Car" };
+            await AddAsync(p2);
+            Project p3 = new Project { Id = 3, Name = "Project Dairy" };
+            await AddAsync(p3);
 
             //Daily Tasks
             DailyTask d1 = new() { Name = "Do it now", Complete = true, AssociatedProjectId = 1, Date = date };

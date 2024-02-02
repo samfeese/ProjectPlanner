@@ -1,5 +1,4 @@
-﻿using AndroidX.DynamicAnimation;
-using ProjectPlanner.Models;
+﻿using ProjectPlanner.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

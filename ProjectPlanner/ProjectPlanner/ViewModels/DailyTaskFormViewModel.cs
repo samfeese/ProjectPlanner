@@ -133,21 +133,40 @@ namespace ProjectPlanner.ViewModels
 
         private async void AddTask()
         {
-            TaskDate = DateTime.Parse(TaskDateString);
-            if (_taskId > 0)
+            bool isValid = Validate();
+            if (isValid)
             {
-                bool isComplete = SelectedStatus == "Complete";
-                DailyTask dt = new DailyTask { Id = _taskId, Name = TaskName, Date = TaskDate, Complete = isComplete, AssociatedProjectId = daily.AssociatedProjectId };
-                await db.UpdateAsync(dt);
-                await Shell.Current.GoToAsync("..");
-            }
-            else
-            {
-                DailyTask dt = new DailyTask { Name = TaskName, Date = TaskDate, AssociatedProjectId = _projectId };
-                await db.AddAsync(dt);
-                await Shell.Current.GoToAsync("..");
+                TaskDate = DateTime.Parse(TaskDateString);
+                if (_taskId > 0)
+                {
+                    bool isComplete = SelectedStatus == "Complete";
+                    DailyTask dt = new DailyTask { Id = _taskId, Name = TaskName, Date = TaskDate, Complete = isComplete, AssociatedProjectId = daily.AssociatedProjectId };
+                    await db.UpdateAsync(dt);
+                    await Shell.Current.GoToAsync("..");
+                }
+                else
+                {
+                    DailyTask dt = new DailyTask { Name = TaskName, Date = TaskDate, AssociatedProjectId = _projectId };
+                    await db.AddAsync(dt);
+                    await Shell.Current.GoToAsync("..");
+                }
             }
 
+        }
+        private Task Alert(string title, string message)
+        {
+            return Shell.Current.DisplayAlert(title, message, "OK");
+        }
+        private bool Validate()
+        {
+
+            if (string.IsNullOrWhiteSpace(TaskName))
+            {
+                Alert("Validation Error", "Task name is required.");
+                return false;
+            }
+
+            return true;
         }
 
         private string _saveButtonText = "Add Task";

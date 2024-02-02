@@ -83,7 +83,21 @@ namespace ProjectPlanner.ViewModels
                 OnPropertyChanged(nameof(Completed));
             }
         }
+        private Task Alert(string title, string message)
+        {
+            return Shell.Current.DisplayAlert(title, message, "OK");
+        }
+        private bool Validate()
+        {
 
+            if (string.IsNullOrWhiteSpace(TaskName))
+            {
+                Alert("Validation Error", "Task name is required.");
+                return false;
+            }
+
+            return true;
+        }
         public async void RetrieveTask()
         {
             SprintTask st = await db.GetSingleAsync<SprintTask>(_taskId);
@@ -119,18 +133,22 @@ namespace ProjectPlanner.ViewModels
 
         private async void AddTask()
         {
-            if (_taskId > 0)
+            bool valid = Validate();
+            if (valid)
             {
-                bool isComplete = SelectedStatus == "Complete";
-                SprintTask dt = new SprintTask { Id = _taskId, Name = TaskName, Complete = isComplete, AssociatedSprintId = task.AssociatedSprintId };
-                await db.UpdateAsync(dt);
-                await Shell.Current.GoToAsync("..");
-            }
-            else
-            {
-                SprintTask dt = new SprintTask { Name = TaskName, AssociatedSprintId = _projectId };
-                await db.AddAsync(dt);
-                await Shell.Current.GoToAsync("..");
+                if (_taskId > 0)
+                {
+                    bool isComplete = SelectedStatus == "Complete";
+                    SprintTask dt = new SprintTask { Id = _taskId, Name = TaskName, Complete = isComplete, AssociatedSprintId = task.AssociatedSprintId };
+                    await db.UpdateAsync(dt);
+                    await Shell.Current.GoToAsync("..");
+                }
+                else
+                {
+                    SprintTask dt = new SprintTask { Name = TaskName, AssociatedSprintId = _projectId };
+                    await db.AddAsync(dt);
+                    await Shell.Current.GoToAsync("..");
+                }
             }
 
         }

@@ -14,6 +14,8 @@ namespace ProjectPlanner.ViewModels
         public ICommand EditProject { get; set; }
         public ICommand SeedData { get; }
         public ICommand Truncate { get;  }
+        public ICommand SearchCommand { get; }
+        public ICommand SearchCommandDefault { get; }
         private Project selectedProject;
 
         readonly DatabaseHelper db;
@@ -27,7 +29,54 @@ namespace ProjectPlanner.ViewModels
             EditProject = new Command<Project>(OnEditTerm);
             SeedData = new Command(Seed);
             Truncate = new Command(TruncateData);
+            SearchCommand = new Command<string>(Search);
+            SearchCommandDefault = new Command(SearchDefault);
 
+        }
+
+        private string _search;
+        public string Query
+        {
+            get => _search;
+            set
+            {
+                _search = value;
+                OnPropertyChanged(nameof(Query));
+                // Optionally trigger the search command automatically as the query changes
+                SearchCommand.Execute(_search);
+            }
+        }
+
+        private async void Search(string query)
+        {
+            List<Project> dbProjects = await db.GetAllByNameAsync(query);
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                GetProjects.Clear();
+                foreach (Project p in dbProjects)
+                {
+                    GetProjects.Add(p);
+                    OnPropertyChanged(nameof(GetProjects));
+                }
+
+            }
+           );
+        }
+
+        private async void SearchDefault()
+        {
+            List<Project> dbProjects = await db.GetAllAsync<Project>();
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                GetProjects.Clear();
+                foreach (Project p in dbProjects)
+                {
+                    GetProjects.Add(p);
+                    OnPropertyChanged(nameof(GetProjects));
+                }
+
+            }
+           );
         }
 
         public ObservableCollection<Project> GetProjects

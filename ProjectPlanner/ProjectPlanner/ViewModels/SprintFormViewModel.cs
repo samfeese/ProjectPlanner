@@ -1,5 +1,4 @@
-﻿using Android.Telecom;
-using ProjectPlanner.Models;
+﻿using ProjectPlanner.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -113,22 +112,52 @@ namespace ProjectPlanner.ViewModels
         private async void AddSprintBtn()
         {
 
+            bool validate = Validate();
+            if (validate)
+            {
+                {
 
-            if (SprintId > 0)
-            {
-                Sprint s = new Sprint { Id = SprintId, Name = sprintName, StartDate = startDate, EndDate = endDate, AssociatedProjectId = ProjectId };
-                await db.UpdateAsync(s);
-                await Shell.Current.GoToAsync("..");
-            }
-            else
-            {
-                Sprint s = new Sprint {  Name = sprintName, StartDate = startDate, EndDate = endDate, AssociatedProjectId = ProjectId };
-                await db.AddAsync(s);
-                await Shell.Current.GoToAsync("..");
+                }
+                if (SprintId > 0)
+                {
+                    Sprint s = new Sprint { Id = SprintId, Name = sprintName, StartDate = startDate, EndDate = endDate, AssociatedProjectId = ProjectId };
+                    await db.UpdateAsync(s);
+                    await Shell.Current.GoToAsync("..");
+                }
+                else
+                {
+                    Sprint s = new Sprint { Name = sprintName, StartDate = startDate, EndDate = endDate, AssociatedProjectId = ProjectId };
+                    await db.AddAsync(s);
+                    await Shell.Current.GoToAsync("..");
+                }
             }
 
         }
+        private Task Alert(string title, string message)
+        {
+            return Shell.Current.DisplayAlert(title, message, "OK");
+        }
+        private bool Validate()
+        {
 
+            if (string.IsNullOrWhiteSpace(SprintName))
+            {
+                Alert("Validation Error", "Sprint name is required.");
+                return false;
+            }
+            if (StartDate == default || EndDate == default)
+            {
+                Alert("Validation Error", "Start and End dates are required.");
+                return false;
+            }
+            if (EndDate < StartDate)
+            {
+                Alert("Validation Error", "End date cannot be earlier than Start date.");
+                return false;
+            }
+
+            return true;
+        }
         private async void DeleteSprintBtn()
         {
             if (SprintId > 0)
@@ -136,6 +165,7 @@ namespace ProjectPlanner.ViewModels
                 await db.DeleteAsync<Sprint>(SprintId);
                 await Shell.Current.GoToAsync("..");
             }
+
         }
 
         private string _saveButtonText = "Add Sprint";

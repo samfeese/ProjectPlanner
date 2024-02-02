@@ -1,4 +1,5 @@
-﻿using ProjectPlanner.Views;
+﻿using ProjectPlanner.ViewModels;
+using ProjectPlanner.Views;
 
 namespace ProjectPlanner
 {
@@ -15,6 +16,21 @@ namespace ProjectPlanner
             Routing.RegisterRoute("sprintForm", typeof(SprintForm));
             Routing.RegisterRoute("sprintPage", typeof(SprintPage));
             Routing.RegisterRoute("sprintTaskForm", typeof(SprintTaskForm));
+        }
+        private async void OnNavigateHomeClicked(object sender, EventArgs e)
+        {
+      
+            await GoToAsync("mainPage");
+        }
+
+        private void OnSearchQueryChanged(object sender, EventArgs e)
+        {
+            if (sender is SearchHandler searchHandler)
+            {
+                // Implement what happens when the search query changes
+                // You can call the search method from the ViewModel
+                (BindingContext as MainPageViewModel)?.SearchCommand.Execute(searchHandler.Query);
+            }
         }
     }
 }
