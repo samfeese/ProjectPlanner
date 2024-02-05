@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
+using ProjectPlanner.Interfaces;
 using ProjectPlanner.Models;
 
 
@@ -18,12 +19,26 @@ namespace ProjectPlanner.ViewModels
         public ICommand SearchCommandDefault { get; }
         private Project selectedProject;
 
-        readonly DatabaseHelper db;
+        readonly IDatabaseHelper db;
 
         public MainPageViewModel() 
         {
             AllProjects = new ObservableCollection<Project>(); 
             db = new DatabaseHelper();
+            NavProjectForm = new Command(NavigateToProjectForm);
+            ProjectSelected = new Command(OnProjectSelected);
+            EditProject = new Command<Project>(OnEditTerm);
+            SeedData = new Command(Seed);
+            Truncate = new Command(TruncateData);
+            SearchCommand = new Command<string>(Search);
+            SearchCommandDefault = new Command(SearchDefault);
+
+        }
+
+        public MainPageViewModel(IDatabaseHelper dbHelperForTesting)
+        {
+            AllProjects = new ObservableCollection<Project>();
+            db = dbHelperForTesting;
             NavProjectForm = new Command(NavigateToProjectForm);
             ProjectSelected = new Command(OnProjectSelected);
             EditProject = new Command<Project>(OnEditTerm);
@@ -132,8 +147,7 @@ namespace ProjectPlanner.ViewModels
         {
             _isEditing = false;
             List<Project> dbProjects = await db.GetAllAsync<Project>();
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
+      
                 GetProjects.Clear();               
                 foreach (Project p in dbProjects)
                 {
@@ -141,8 +155,8 @@ namespace ProjectPlanner.ViewModels
                     OnPropertyChanged(nameof(GetProjects));
                 }
                 
-            }
-            );
+           
+            
         }
 
         public async void Seed()

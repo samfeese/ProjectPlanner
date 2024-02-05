@@ -1,4 +1,5 @@
-﻿using ProjectPlanner.Models;
+﻿using ProjectPlanner.Interfaces;
+using ProjectPlanner.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,7 +14,8 @@ namespace ProjectPlanner.ViewModels
     [QueryProperty(nameof(ProjectId), "projectId")]
     public class SprintFormViewModel : INotifyPropertyChanged
     {
-        readonly DatabaseHelper db;
+        readonly IDatabaseHelper db;
+        readonly IAlertService alertService;
         private int _projectId;
         private int _sprintId;
 
@@ -31,7 +33,18 @@ namespace ProjectPlanner.ViewModels
             SaveSprint = new Command(AddSprintBtn);
             DeleteSprint = new Command(DeleteSprintBtn);
             db = new DatabaseHelper();
+            alertService = new AlertService();
 
+            StartDate = DateTime.Now;
+            EndDate = DateTime.Now.AddDays(14);
+        }
+        public SprintFormViewModel(IDatabaseHelper dbInjectionForTest, IAlertService alert)
+        {
+            IsDeleteVisible = false;
+            SaveSprint = new Command(AddSprintBtn);
+            DeleteSprint = new Command(DeleteSprintBtn);
+            db = dbInjectionForTest;
+            alertService = alert;
             StartDate = DateTime.Now;
             EndDate = DateTime.Now.AddDays(14);
         }
@@ -135,9 +148,9 @@ namespace ProjectPlanner.ViewModels
         }
         private Task Alert(string title, string message)
         {
-            return Shell.Current.DisplayAlert(title, message, "OK");
+            return alertService.ShowAlert(title, message, "OK");
         }
-        private bool Validate()
+        public bool Validate()
         {
 
             if (string.IsNullOrWhiteSpace(SprintName))

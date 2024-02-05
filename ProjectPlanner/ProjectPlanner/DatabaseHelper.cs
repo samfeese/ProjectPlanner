@@ -7,10 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using ProjectPlanner.Interfaces;
 
 namespace ProjectPlanner
 {
-    public class DatabaseHelper
+    public class DatabaseHelper : IDatabaseHelper
     {
         private SQLiteAsyncConnection _db;
 
@@ -106,9 +107,9 @@ namespace ProjectPlanner
             await AddAsync(n1);
             Notes n2 = new Notes { Note = "Today Is Yesterday", AssociatedProjectId = 1, Date = date.AddDays(-1) };
             await AddAsync(n2);
-           
+
             //Sprints
-            Sprint s1 = new Sprint { Name="First Sprint", AssociatedProjectId = 1, StartDate = date, EndDate = date.AddDays(14) };
+            Sprint s1 = new Sprint { Name = "First Sprint", AssociatedProjectId = 1, StartDate = date, EndDate = date.AddDays(14) };
             await AddAsync(s1);
 
             //SprintTask
@@ -124,7 +125,7 @@ namespace ProjectPlanner
             await Init();
             var query = _db.Table<DailyTask>().Where(t => t.AssociatedProjectId == key);
             return await query.ToListAsync();
-          
+
         }
 
         public async Task<List<DailyTask>> GetAllDailyByProjectIdAndDate(int key, DateTime date)
@@ -152,7 +153,7 @@ namespace ProjectPlanner
             var query = _db.Table<Sprint>().Where(t => t.AssociatedProjectId == key);
             return await query.ToListAsync();
         }
-        
+
         public async Task<List<SprintTask>> GetAllSprintTasksBySprintId(int key)
         {
             await Init();
